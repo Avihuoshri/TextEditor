@@ -23,7 +23,11 @@ void Document::increaseLineNumber()
 {
     currentLine++ ;
 }
-void Document::insertToList(string line) { data.push_back(line) ; }
+void Document::insertToList(string line)
+{
+
+    data.insert(data.begin() + currentLine  , line) ;
+}
 
 int Document::vectorSize() { return data.size() ;}
 
@@ -76,83 +80,120 @@ void Document::deleteCurrentLine()
 void Document::itToCurrentLine()
 {
     resetIterator() ;
-    for (int i = 0; i < currentLine ; ++i) // לבדוק שלא עושה בעיות כש - currentLine=-1
-    {
-        it++ ;
-    }
+    it = data.begin() + currentLine ;
 }
 void Document::forwardSearch(string text , int index)
 {
     bool isExist = false ;
-    int i = index ;
+    int lastCurrentLine ;
+    int counter = 0 ;
     lastSearchStr = text ;
-
     resetIterator() ;
-    if(index == currentLine)
-        itToCurrentLine() ;
-    else if(index == lastSearch)
-        itToLastSearch() ;
-
-    while(it != data.end() && isExist == false )
+    if(currentLine == index)
     {
-
-        if((*it).find(lastSearchStr) != string::npos) {
-            isExist = true;
-            lastSearch = ++i ;
-            //currentLine = lastSearch-1 ;
-            cout << *it << endl;
-        }
-        if( isExist == false)
+        if(currentLine + 1 >= data.size())
         {
-            ++it ;
-            ++i ;
+            currentLine = 1 ;
+            lastCurrentLine = currentLine ;
         }
-
+        else
+        {
+            currentLine++;
+            lastCurrentLine = currentLine ;
+        }
+        itToCurrentLine() ;
     }
-    if(isExist ==false) {
-        it = data.begin();
-        for (int j = 0; j < lastSearch; ++j) {
-            if ((*it).find(lastSearchStr) != string::npos) {
-                isExist = true;
-                lastSearch = ++j;
-                cout << "found it!! : " << *it << endl;
+    else if(lastSearch == index)
+    {
+        itToLastSearch() ;
+    }
+
+    while(currentLine < data.size() && isExist == false)
+    {
+        counter++ ;
+
+        if((*it).find(text) != string::npos )
+        {
+            isExist = true ;
+            lastSearch = currentLine ;
+            cout << *it << endl ;
+            break ;
+        }
+        currentLine++ ;
+        it++ ;
+    }
+
+    if(isExist == false)
+    {
+        currentLine = 1 ;
+        advance(it , currentLine);
+
+        while(currentLine <= lastCurrentLine &&  isExist == false)
+        {
+            if((*it).find(text) != string::npos )
+            {
+                isExist = true ;
+                cout << *it << endl ;
             }
-            ++it;
-            ++j;
-
+            
         }
     }
-
 }
 
 void Document::backwardSearch(string text , int index)
 {
     bool isExist = false ;
+    int lastCurrentLine ;
+    int counter = 0 ;
     lastSearchStr = text ;
-
     resetIterator() ;
-    if(index == currentLine)
-        itToCurrentLine() ;
-    else if(index == lastSearch)
-        itToLastSearch() ;
-
-    int i = index ;
-
-    while(it != data.begin() && isExist == false )
+    if(currentLine == index)
     {
-
-
-        if((*it).find(lastSearchStr) != string::npos) {
-            isExist = true;
-            lastSearch = --i ;
-            cout <<  *it << endl;
+        if(currentLine - 1 < 1)
+        {
+            currentLine = data.size()-1 ;
+            lastCurrentLine = currentLine ;
         }
-        --it ;
-        --i ;
+        else
+        {
+            currentLine--;
+            lastCurrentLine = currentLine ;
+        }
+        itToCurrentLine() ;
     }
-    if((*it).find(text) != string::npos) {
-        lastSearch = --i ;
-        cout << *it << endl;
+    else if(lastSearch == index)
+    {
+        itToLastSearch() ;
+    }
+
+    while(currentLine > 0 && isExist == false)
+    {
+        counter++ ;
+
+        if((*it).find(text) != string::npos )
+        {
+            isExist = true ;
+            lastSearch = currentLine ;
+            cout << *it << endl ;
+            break ;
+        }
+        currentLine-- ;
+        it-- ;
+    }
+
+    if(isExist == false)
+    {
+        currentLine = currentLine = data.size()-1 ;
+        advance(it , currentLine);
+
+        while(currentLine >= lastCurrentLine &&  isExist == false)
+        {
+            if((*it).find(text) != string::npos )
+            {
+                isExist = true ;
+                cout << *it << endl ;
+            }
+        }
     }
 
 }
@@ -167,26 +208,35 @@ void Document::lastSearchText()
 void Document::itToLastSearch()
 {
     resetIterator() ;
-    for (int i = 0; i < lastSearch ; ++i) // לבדוק שלא עושה בעיות כש - currentLine=-1
-    {
-        it++ ;
-    }
+   it = data.begin() + lastSearch ;
 }
 
 void Document:: oldToNew(vector<string> vector)
 {
-   string oldText = vector[0] ;
-   int b_old ;
-   int e_old ;
+    string oldText = vector[0];
+    int b_old;
 
-    resetIterator() ;
-    itToCurrentLine() ;
-    if((*it).find(oldText) != string::npos)
+    resetIterator();
+    it = data.begin() + currentLine;
+    while (it != data.end())
     {
-        b_old = (*it).find(oldText) ;
-        (*it).replace(b_old , vector[0].length() , vector[1]  ) ;
+        if ((*it).find(oldText) != string::npos)
+        {
+            b_old = (*it).find(oldText);
+            (*it).replace(b_old, vector[0].length(), vector[1]);
+        }
+        it++;
     }
+    it = data.begin();
+    while (it != data.begin() + currentLine)
+    {
+        if ((*it).find(oldText) != string::npos)
+        {
+            b_old = (*it).find(oldText);
+            (*it).replace(b_old, vector[0].length(), vector[1]);
+        }
+        it++;
+    }
+
 }
-
-
 
