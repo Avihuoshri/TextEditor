@@ -128,14 +128,14 @@ void Document::forwardSearch(string text , int index)
         currentLine = 1 ;
         advance(it , currentLine);
 
-        while(currentLine <= lastCurrentLine &&  isExist == false)
+        while(currentLine < lastCurrentLine &&  isExist == false)
         {
             if((*it).find(text) != string::npos )
             {
                 isExist = true ;
                 cout << *it << endl ;
             }
-            
+
         }
     }
 }

@@ -78,7 +78,7 @@ void Editor::loop() {
             cout << "%p" << endl;
 //            list<string>::iterator it = text.getIterator();
 //            list<string> dataList = text.getDataList();
-            for (int i = 0 ; i < text.vectorSize() ; ++i)
+            for (int i = 1 ; i < text.vectorSize() ; ++i)
             {
                 cout << text.getVectorList()[i] << endl;
             }
@@ -108,7 +108,7 @@ void Editor::loop() {
                 numOfLines++ ;
 
             }
-//            text.setCurrentLine(text.getCurrentLine() + numOfLines) ;
+            cout << "." << endl ;
             text.resetIterator();
 
         }
